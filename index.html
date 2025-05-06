@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMaster - Plataforma EAD de Programação Web</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS for animations and effects */
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Dark mode toggle styles */
+        .dark-mode-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .dark-mode-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #4F46E5;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100">
+    <!-- Header/Navigation -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm dark:bg-gray-800 transition-colors duration-300">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-code text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                <h1 class="text-xl font-bold">CodeMaster</h1>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#courses" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Cursos</a>
+                <a href="#features" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Recursos</a>
+                <a href="#pricing" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Planos</a>
+                <a href="#testimonials" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Depoimentos</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <label class="dark-mode-toggle">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+                
+                <button class="hidden md:block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    Entrar
+                </button>
+                
+                <button class="md:hidden text-2xl" id="mobileMenuButton">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden bg-white dark:bg-gray-800 px-4 py-2 shadow-md" id="mobileMenu">
+            <div class="flex flex-col space-y-3">
+                <a href="#courses" class="py-2 hover:text-indigo-600 dark:hover:text-indigo-400">Cursos</a>
+                <a href="#features" class="py-2 hover:text-indigo-600 dark:hover:text-indigo-400">Recursos</a>
+                <a href="#pricing" class="py-2 hover:text-indigo-600 dark:hover:text-indigo-400">Planos</a>
+                <a href="#testimonials" class="py-2 hover:text-indigo-600 dark:hover:text-indigo-400">Depoimentos</a>
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg w-full">
+                    Entrar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-16 md:py-24 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0 animate-fadeIn">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                    Domine a programação web com nossos cursos <span class="text-indigo-600 dark:text-indigo-400">interativos</span>
+                </h1>
+                <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">
+                    Aprenda HTML, CSS, JavaScript e frameworks modernos com projetos práticos e mentoria de especialistas.
+                </p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                        Comece agora gratuitamente
+                    </button>
+                    <button class="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-700 px-6 py-3 rounded-lg font-medium transition-colors dark:text-indigo-400 dark:border-indigo-400">
+                        <i class="fas fa-play mr-2"></i> Ver demonstração
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center animate-fadeIn">
+                <div class="relative">
+                    <div class="w-full h-auto rounded-xl shadow-xl overflow-hidden border-8 border-white dark:border-gray-700">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                             alt="Programação web" class="w-full h-auto">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-trophy text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-bold">+10.000</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Alunos formados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="py-16 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">Nossos Cursos</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    Cursos completos para você se tornar um desenvolvedor web profissional
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Course 1 -->
+                <div class="course-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-md transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=764&q=80" 
+                             alt="HTML e CSS" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                            Iniciante
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold">HTML5 e CSS3 Moderno</h3>
+                            <div class="flex items-center text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <span class="ml-1 text-gray-700 dark:text-gray-300">4.9</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            Domine os fundamentos do desenvolvimento web com HTML5 semântico e CSS3 moderno.
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="far fa-clock text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">20 horas</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-user-graduate text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">1.2k alunos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors">
+                            Começar curso
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Course 2 -->
+                <div class="course-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-md transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                             alt="JavaScript" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                            Intermediário
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold">JavaScript Completo ES6+</h3>
+                            <div class="flex items-center text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <span class="ml-1 text-gray-700 dark:text-gray-300">4.8</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            Aprenda JavaScript moderno com ES6+, manipulação do DOM, async/await e muito mais.
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="far fa-clock text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">35 horas</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-user-graduate text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">2.4k alunos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors">
+                            Começar curso
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Course 3 -->
+                <div class="course-card bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-md transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                             alt="React" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                            Avançado
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="text-xl font-bold">React.js e Next.js</h3>
+                            <div class="flex items-center text-yellow-500">
+                                <i class="fas fa-star"></i>
+                                <span class="ml-1 text-gray-700 dark:text-gray-300">4.9</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            Construa aplicações modernas com React, Hooks, Context API e Next.js para SSR.
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i class="far fa-clock text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">50 horas</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-user-graduate text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">1.8k alunos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors">
+                            Começar curso
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-700 px-6 py-3 rounded-lg font-medium transition-colors dark:text-indigo-400 dark:border-indigo-400">
+                    Ver todos os cursos (12+)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">Por que escolher a CodeMaster?</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    Uma experiência de aprendizado completa e personalizada
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-laptop-code text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Aulas Práticas</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Aprenda fazendo com projetos reais e exercícios práticos em cada módulo.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-headset text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Suporte Individual</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Mentores disponíveis para tirar dúvidas e ajudar no seu desenvolvimento.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-certificate text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Certificado</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Receba um certificado reconhecido ao concluir cada curso.
+                    </p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-mobile-alt text-indigo-600 dark:text-indigo-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Acesso Mobile</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Aprenda em qualquer lugar com nosso aplicativo e plataforma responsiva.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Additional Feature - Video Demo -->
+            <div class="mt-16 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2">
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 p-8">
+                        <h3 class="text-2xl font-bold mb-4">Experimente uma aula gratuita</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            Assista a esta aula introdutória sobre HTML5 e CSS3 para entender como nossas aulas funcionam.
+                        </p>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-play text-indigo-600 dark:text-indigo-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="font-semibold">120 aulas</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">em HTML/CSS</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-code text-indigo-600 dark:text-indigo-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="font-semibold">15 projetos</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">práticos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-play mr-2"></i> Assista mais aulas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16 bg-white dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">Planos que cabem no seu bolso</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    Escolha o plano ideal para seus objetivos de aprendizado
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Basic Plan -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <h3 class="text-xl font-semibold mb-2">Básico</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Para quem está começando</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">R$ 29</span>
+                        <span class="text-gray-500 dark:text-gray-400">/mês</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Acesso a todos os cursos básicos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Suporte por e-mail</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-times text-gray-300 mr-2"></i>
+                            <span>Certificado de conclusão</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-times text-gray-300 mr-2"></i>
+                            <span>Projetos práticos</span>
+                        </li>
+                    </ul>
+                    <button class="w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-600 py-2 rounded-lg transition-colors dark:text-indigo-400 dark:border-indigo-400">
+                        Começar agora
+                    </button>
+                </div>
+                
+                <!-- Pro Plan (Featured) -->
+                <div class="relative bg-indigo-50 dark:bg-gray-900 p-8 rounded-xl shadow-md border-2 border-indigo-200 dark:border-indigo-700 transform scale-105">
+                    <div class="absolute top-0 right-0 bg-indigo-600 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg text-sm font-medium">
+                        Popular
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Profissional</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Para quem quer se destacar</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">R$ 59</span>
+                        <span class="text-gray-500 dark:text-gray-400">/mês</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Acesso completo a todos os cursos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Suporte prioritário</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Certificado de conclusão</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Projetos práticos e correções</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Comunidade exclusiva</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition-colors">
+                        Começar agora
+                    </button>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <h3 class="text-xl font-semibold mb-2">Empresas</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Para times e organizações</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">R$ 99</span>
+                        <span class="text-gray-500 dark:text-gray-400">/mês</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Até 5 usuários</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Relatórios de progresso</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Certificados para todos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Conteúdo personalizável</span>
+                        </li>
+                    </ul>
+                    <button class="w-full border border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-600 py-2 rounded-lg transition-colors dark:text-indigo-400 dark:border-indigo-400">
+                        Fale conosco
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <p class="text-gray-600 dark:text-gray-300">
+                    Precisa de algo diferente? <a href="#" class="text-indigo-600 hover:underline dark:text-indigo-400">Fale com nosso time</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">O que nossos alunos dizem</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    Mais de 10.000 alunos transformaram suas carreiras com a CodeMaster
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Testimonial 1 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Ana Silva" class="w-full h-full object-cover">
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold">Ana Silva</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Desenvolvedora Front-end</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-2">
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        "Os cursos da CodeMaster mudaram minha carreira. Em 6 meses consegui meu primeiro emprego como desenvolvedora front-end. As aulas são muito práticas e os mentores realmente se importam com o seu aprendizado."
+                    </p>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Carlos Oliveira" class="w-full h-full object-cover">
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold">Carlos Oliveira</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Engenheiro de Software</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-2">
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <i class="fas fa-star text-yellow-500"></i>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        "Já tinha experiência com programação, mas os cursos avançados de React e Node.js me deram as habilidades específicas que precisava para uma promoção. A qualidade do conteúdo é excelente."
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Progress Stats -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">98%</div>
+                    <p class="text-gray-600 dark:text-gray-300">Satisfação dos alunos</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">10k+</div>
+                    <p class="text-gray-600 dark:text-gray-300">Alunos formados</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">500+</div>
+                    <p class="text-gray-600 dark:text-gray-300">Horas de conteúdo</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">85%</div>
+                    <p class="text-gray-600 dark:text-gray-300">Taxa de conclusão</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-indigo-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Pronto para transformar sua carreira?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">
+                Comece hoje mesmo e dê o primeiro passo para se tornar um desenvolvedor web profissional.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button class="bg-white text-indigo-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition-colors">
+                    Comece agora - 7 dias grátis
+                </button>
+                <button class="border border-white text-white hover:bg-indigo-700 px-8 py-3 rounded-lg font-medium transition-colors">
+                    Fale com um consultor
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-code text-2xl text-indigo-400"></i>
+                        <h3 class="text-xl font-bold text-white">CodeMaster</h3>
+                    </div>
+                    <p class="mb-4">
+                        A plataforma de ensino de programação web mais completa do mercado.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Cursos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">HTML & CSS</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">JavaScript</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">React.js</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Node.js</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">UI/UX Design</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Recursos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Tutoriais</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Documentação</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Comunidade</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Carreiras</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Contato</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2"></i>
+                            <span>contato@codemaster.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-2"></i>
+                            <span>(11) 1234-5678</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            <span>São Paulo, Brasil</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p>© 2023 CodeMaster. Todos os direitos reservados.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Termos de Serviço</a>
+                    <a href="#" class="hover:text-white transition-colors">Política de Privacidade</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const html = document.documentElement;
+        
+        // Check for saved user preference or system preference
+        if (localStorage.getItem('darkMode') === 'true' || 
+            (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            darkModeToggle.checked = true;
+        }
+        
+        darkModeToggle.addEventListener('change', () => {
+            if (darkModeToggle.checked) {
+                html.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                html.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Course card animation on scroll
+        const courseCards = document.querySelectorAll('.course-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        courseCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
