@@ -1,9 +1,11 @@
 import React from 'react';
+import Navbar from '../components/Navbar.js';
 
 function TelaInicial() {
   return (
-    <div className="login-container">
-      <h2 className="welcome">🎉 Bem-vindo ao Painel!</h2>
+    <div>
+      <Navbar />
+      <h1>Conteudo</h1>
     </div>
   );
 }
