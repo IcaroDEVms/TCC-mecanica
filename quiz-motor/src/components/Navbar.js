@@ -12,9 +12,9 @@ const Navbar = () => {
       </div>
       <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
         <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/services">Services</a></li>
-        <li><a href="/contact">Contact</a></li>
+        <li><a href="/about">Sobre</a></li>
+        <li><a href="/services">Manuais</a></li>
+        <li><a href="/contact">Sair</a></li>
       </ul>
     </nav>
   );
