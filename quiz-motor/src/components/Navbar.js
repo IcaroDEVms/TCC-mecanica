@@ -35,7 +35,7 @@ const Navbar = () => {
         </div>
 
         <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
-          <li><Link to="/">Home</Link></li>
+          <li><Link to="/TelaInicial">Home</Link></li>
           <li><Link to="/manuais">Manuais</Link></li>
           <li><Link to="/sobre">Sobre</Link></li>
           <li><button className="logout-button" onClick={handleLogout}>Sair</button></li>

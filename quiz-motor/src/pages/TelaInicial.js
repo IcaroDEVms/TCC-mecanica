@@ -10,14 +10,14 @@ function TelaInicial() {
       title: "Manual de Manutenção de Motores",
       image: "https://th.bing.com/th/id/OIP.ARcfJm47G3v082RT1Ko3iAHaFW?cb=iwc1&rs=1&pid=ImgDetMain",
       description: "Guia completo sobre motores e suas aplicações",
-      to: "/manual-motores"
+      to: "/QuizMotor"
     },
     {
       id: 2,
       title: "Manual de Manutenção",
       image: "https://images-na.ssl-images-amazon.com/images/I/61hg5ihv0RL.jpg",
       description: "Procedimentos de manutenção preventiva",
-      to: "/manual-manutencao"
+      to: "/VerManual"
     },
     {
       id: 3,
