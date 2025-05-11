@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
-import logoSvg from '../images/gearbox (1).svg';
+import logoSvg from '../images/gearbox-1.svg';
 
 
 

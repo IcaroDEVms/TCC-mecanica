@@ -6,7 +6,7 @@ function TelaInicial() {
   const manuals = [
     {
       id: 1,
-      title: "Manual de Manutenção de Motores",
+      title: "Quiz Manutenção De Bombas Centrífugas",
       image: "https://th.bing.com/th/id/OIP.ARcfJm47G3v082RT1Ko3iAHaFW?cb=iwc1&rs=1&pid=ImgDetMain",
       description: "Guia completo sobre motores e suas aplicações",
       to: "/QuizMotor",
@@ -14,9 +14,9 @@ function TelaInicial() {
     },
     {
       id: 2,
-      title: "Manual de Manutenção",
-      image: "https://images-na.ssl-images-amazon.com/images/I/61hg5ihv0RL.jpg",
-      description: "Procedimentos de manutenção preventiva",
+      title: "PDF Padrão de Ajustes Para Montagem de Bombas Centrífugas",
+      image: "https://i.imgur.com/ZUK3j8j.png",
+      description: "Documento técnico com especificações padrões para ajustes de bombas centrífugas",
       to: "/VerManual",
       color: "from-purple-500 to-pink-400"
     },

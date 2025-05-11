@@ -22,10 +22,14 @@ const Navbar = () => {
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
     }
-    localStorage.setItem('darkMode', isDarkMode);
+    
+    // Dispatch a custom event to notify other components
+    window.dispatchEvent(new Event('darkModeChange'));
   }, [isDarkMode]);
 
   const handleLogout = () => {
@@ -33,7 +37,7 @@ const Navbar = () => {
   };
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode(prevMode => !prevMode);
   };
 
   return (
