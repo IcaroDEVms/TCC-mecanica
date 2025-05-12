@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import {jsPDF} from 'jspdf';
 
 export default function QuizMecanica() {
   // Estados para gerenciar o quiz
@@ -419,6 +419,93 @@ export default function QuizMecanica() {
     campo => respostas[`${faseDados.id}_${campo.id}`]
   );
 
+  // Função para gerar e baixar o relatório em PDF
+  const baixarRelatorioPDF = () => {
+    const doc = new jsPDF();
+    
+    // Configurações iniciais
+    const margin = 15;
+    let yPos = margin;
+    const lineHeight = 7;
+    const pageHeight = doc.internal.pageSize.height - margin;
+    
+    // Adicionar título
+    doc.setFontSize(20);
+    doc.setTextColor(40, 53, 147);
+    doc.text('Relatório do Quiz - Manutenção de Bombas', 105, yPos, { align: 'center' });
+    yPos += lineHeight * 2;
+    
+    // Adicionar informações gerais
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    
+    const dataFormatada = new Date().toLocaleString('pt-BR');
+    doc.text(`Data: ${dataFormatada}`, margin, yPos);
+    yPos += lineHeight;
+    
+    doc.text(`Pontuação Final: ${pontuacao} pontos`, margin, yPos);
+    yPos += lineHeight;
+    
+    const desempenho = (pontuacao / (fases.length * 100) * 100).toFixed(1);
+    doc.text(`Desempenho: ${desempenho}%`, margin, yPos);
+    yPos += lineHeight * 2;
+    
+    // Adicionar detalhes por fase
+    doc.setFontSize(14);
+    doc.setTextColor(40, 53, 147);
+    doc.text('Detalhes por Fase:', margin, yPos);
+    yPos += lineHeight * 1.5;
+    
+    fases.forEach((fase, index) => {
+      // Verificar se precisa de nova página
+      if (yPos > pageHeight - 30) {
+        doc.addPage();
+        yPos = margin;
+      }
+      
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Fase ${index + 1}: ${fase.titulo}`, margin, yPos);
+      yPos += lineHeight;
+      
+      fase.campos.forEach(campo => {
+        const respostaUsuario = respostas[`${fase.id}_${campo.id}`] || 'Não respondido';
+        const correta = respostaUsuario === campo.valorCorreto;
+        
+        // Definir cor com base na correção da resposta
+        if (correta) {
+          doc.setTextColor(0, 128, 0); // Verde para respostas corretas
+        } else {
+          doc.setTextColor(255, 0, 0); // Vermelho para respostas incorretas
+        }
+        
+        doc.setFontSize(10);
+        doc.text(`- ${campo.label}:`, margin + 5, yPos);
+        doc.text(` ${respostaUsuario}`, margin + 60, yPos);
+        
+        // Voltar para cor preta para a resposta correta
+        doc.setTextColor(0, 0, 0);
+        doc.text(`(Correto: ${campo.valorCorreto})`, margin + 70, yPos);
+                
+        yPos += lineHeight;
+      });
+      
+      yPos += lineHeight * 0.5;
+    });
+    
+    // Adicionar rodapé
+    doc.addPage();
+    yPos = margin;
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Relatório gerado pelo Quiz de Manutenção de Bombas Centrífugas', 105, yPos, { align: 'center' });
+    yPos += lineHeight;
+    doc.text('Desenvolvido para estudantes de mecânica', 105, yPos, { align: 'center' });
+    
+    // Salvar o PDF
+    doc.save(`relatorio-quiz-bombas-${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   if (quizCompletado) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -432,6 +519,15 @@ export default function QuizMecanica() {
           >
             Reiniciar Quiz
           </button>
+          <button 
+              onClick={baixarRelatorioPDF}
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 flex justify-self-center mt-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+              Baixar Relatório (PDF)
+            </button>
         </div>
       </div>
     );

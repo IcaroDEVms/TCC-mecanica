@@ -10,6 +10,7 @@
     "canvas-confetti": "^1.9.3",
     "firebase": "^11.7.1",
     "framer-motion": "^12.10.5",
+    "jspdf": "^3.0.1",
     "konva": "^9.3.20",
     "lucide-react": "^0.509.0",
     "react": "^19.1.0",
