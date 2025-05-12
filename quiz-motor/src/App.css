@@ -22,3 +22,13 @@
 * {
   box-sizing: border-box;
 }
+
+footer {
+  background-color: #1f2937; /* bg-gray-800 */
+  color: white;
+}
+
+footer a:hover {
+  color: #ffffff;
+  transition: color 0.3s ease;
+}

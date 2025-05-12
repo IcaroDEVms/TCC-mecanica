@@ -5,16 +5,19 @@ import TelaInicial from './pages/TelaInicial';
 import QuizMotor from './pages/QuizMotor';
 import './App.css';
 import VerManual from './pages/VerManual';
+import Footer from './components/Footer';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/TelaInicial" element={<TelaInicial />} />
-        <Route path="/QuizMotor" element={<QuizMotor />} />
-        <Route path="/VerManual" element={<VerManual />} />
-      </Routes>
+      <div className="min-h-screen flex flex-col">
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/TelaInicial" element={<><TelaInicial /><Footer /></>} />
+          <Route path="/QuizMotor" element={<><QuizMotor /><Footer /></>} />
+          <Route path="/VerManual" element={<><VerManual /><Footer /></>} />
+        </Routes>
+      </div>
     </Router>
   );
 }
