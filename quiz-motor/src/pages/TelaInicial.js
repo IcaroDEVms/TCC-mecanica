@@ -25,7 +25,7 @@ function TelaInicial() {
       title: "Manual de Segurança EPI",
       image: "https://th.bing.com/th/id/OIP.32XJNCER5W0fbOQJ6mmfXQHaKX?rs=1&pid=ImgDetMain",
       description: "Normas e procedimentos de segurança",
-      to: "/manual-seguranca",
+      to: "/ManualSeguranca",
       color: "from-orange-500 to-yellow-400"
     }
   ];
