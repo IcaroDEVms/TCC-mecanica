@@ -12,6 +12,7 @@ export default function QuizMecanica() {
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
   const [isMobile, setIsMobile] = useState(false);
   const [camposVisiveis, setCamposVisiveis] = useState({});
+  const [showExitModal, setShowExitModal] = useState(false);
   
   // Detectar tamanho da tela e ajustar para mobile
   useEffect(() => {
@@ -243,6 +244,10 @@ export default function QuizMecanica() {
     campo => camposVisiveis[campo.id] ? respostas[`${faseDados.id}_${campo.id}`] : true
   );
 
+  const handleExit = () => {
+  window.location.href = 'TelaInicial';
+};
+
   // Função para gerar e baixar o relatório em PDF
   const baixarRelatorioPDF = () => {
     const doc = new jsPDF();
@@ -331,12 +336,24 @@ export default function QuizMecanica() {
   };
 
   if (quizCompletado) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-          <h1 className="text-3xl font-bold text-green-600 mb-4">Quiz Completo!</h1>
-          <p className="text-xl mb-4">Parabéns! Você completou o quiz sobre manutenção de bombas centrífugas.</p>
-          <p className="text-2xl font-bold mb-6">Pontuação final: {pontuacao} pontos</p>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 relative">
+      {/* Botão X de sair */}
+      <button 
+        onClick={() => setShowExitModal(true)}
+        className="absolute right-4 top-4 text-gray-600 hover:text-gray-800 focus:outline-none"
+        aria-label="Sair do quiz"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+        <h1 className="text-3xl font-bold text-green-600 mb-4">Quiz Completo!</h1>
+        <p className="text-xl mb-4">Parabéns! Você completou o quiz sobre manutenção de bombas centrífugas.</p>
+        <p className="text-2xl font-bold mb-6">Pontuação final: {pontuacao} pontos</p>
+        <div className="flex flex-col space-y-3">
           <button 
             onClick={reiniciarQuiz}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
@@ -344,23 +361,69 @@ export default function QuizMecanica() {
             Reiniciar Quiz
           </button>
           <button 
-              onClick={baixarRelatorioPDF}
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 flex justify-self-center mt-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-              Baixar Relatório (PDF)
-            </button>
+            onClick={baixarRelatorioPDF}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+            Baixar Relatório (PDF)
+          </button>
+          <button 
+            onClick={() => setShowExitModal(true)}
+            className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Sair do Quiz
+          </button>
         </div>
       </div>
-    );
-  }
+
+      {/* Modal de confirmação para sair */}
+      {showExitModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm mx-4">
+            <div className="text-center">
+              <h3 className="text-xl font-bold mb-4">Tem certeza que deseja sair?</h3>
+              <p className="mb-6">Você será redirecionado para a página inicial.</p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={() => setShowExitModal(false)}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleExit}
+                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+                >
+                  Sair
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       {/* Cabeçalho */}
       <header className="bg-blue-600 text-white p-4">
+        {/* Botão de sair */}
+        <button 
+          onClick={() => setShowExitModal(true)}
+          className="absolute right-4 top-4 text-white hover:text-gray-200 focus:outline-none"
+          aria-label="Sair do quiz"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-2 md:mb-0 text-center md:text-left`}>
             Quiz de Mecânica: Bombas Centrífugas
@@ -370,6 +433,31 @@ export default function QuizMecanica() {
           </div>
         </div>
       </header>
+
+      {showExitModal && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm mx-4">
+      <div className="text-center">
+        <h3 className="text-xl font-bold mb-4">Tem certeza que deseja sair?</h3>
+        <p className="mb-6">Suas respostas não serão salvas.</p>
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => setShowExitModal(false)}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleExit}
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Conteúdo principal */}
       <main className="flex-grow container mx-auto p-4">
