@@ -38,8 +38,8 @@ const VerManual = () => {
 
   const pdfFiles = [
     '/pdfs/M-01.pdf',
-    '/pdfs/M-02.pdf',
     '/pdfs/M-03.pdf',
+    '/pdfs/M-02.pdf',
     '/pdfs/M-04.pdf',
     '/pdfs/M-05.pdf',
     '/pdfs/M-06.pdf',
