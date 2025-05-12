@@ -407,11 +407,6 @@ export default function QuizMecanica() {
           </div>
         </div>
       </main>
-
-      {/* Rodapé */}
-      <footer className="bg-gray-800 text-white py-4 text-center">
-        <p>Quiz Educativo de Manutenção de Bombas Centrífugas - Desenvolvido para Estudantes de Mecânica</p>
-      </footer>
     </div>
   );
 }

@@ -43,7 +43,7 @@ const Navbar = () => {
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
-        <Link to="/" className="logo">
+        <Link to="/TelaInicial" className="logo">
           Manual Rep&Aprova
         </Link>
         
