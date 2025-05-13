@@ -3,6 +3,7 @@ import {jsPDF} from 'jspdf';
 
 export default function QuizMecanica() {
   // Estados para gerenciar o quiz
+  const [showIntro, setShowIntro] = useState(true);
   const [faseAtual, setFaseAtual] = useState(0);
   const [respostas, setRespostas] = useState({});
   const [pontuacao, setPontuacao] = useState(0);
@@ -15,7 +16,7 @@ export default function QuizMecanica() {
   const [showExitModal, setShowExitModal] = useState(false);
   const [respostasVerificadas, setRespostasVerificadas] = useState({});
   const [faseJaPontuada, setFaseJaPontuada] = useState({});
-  
+
   // Detectar tamanho da tela e ajustar para mobile
   useEffect(() => {
     function handleResize() {
@@ -36,6 +37,10 @@ export default function QuizMecanica() {
   useEffect(() => {
     setCamposVisiveis({});
   }, [faseAtual]);
+
+  const comecarQuiz = () => {
+    setShowIntro(false);
+  };
 
   // Função para mostrar um campo quando o botão é clicado
   const mostrarCampo = (campoId) => {
@@ -178,6 +183,41 @@ export default function QuizMecanica() {
     }
   ];
 
+  const handleExit = () => {
+  window.location.href = 'TelaInicial';
+};
+
+   if (showIntro) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <h1 className="text-3xl font-bold !text-black mb-6">Quiz de Manutenção de Bombas Centrífugas</h1>
+          
+          <div className="mb-8 text-left">
+            <p className="mb-4">Você está prestes a iniciar um quiz sobre manutenção de bombas centrífugas.</p>
+            <p className="mb-4">O quiz contém <span className="font-bold">{fases.length}</span> fases, cada uma com medidas específicas que você precisará fornecer.</p>
+            <p className="mb-4">Ao final, você receberá uma pontuação baseada nas respostas corretas e poderá baixar um relatório em PDF.</p>
+          </div>
+          
+          <div className="flex flex-col space-y-4">
+            <button 
+              onClick={comecarQuiz}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300"
+            >
+              Começar Quiz
+            </button>
+            <button 
+              onClick={handleExit}
+              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300"
+            >
+              Desistir e Voltar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const normalizarNumero = (valor) => {
   if (!valor) return '';
   // Substitui vírgula por ponto e remove caracteres não numéricos exceto ponto e vírgula
@@ -259,10 +299,6 @@ export default function QuizMecanica() {
   const todasRespostasPreenchidas = faseDados.campos
   .filter(campo => camposVisiveis[campo.id])
   .every(campo => respostas[`${faseDados.id}_${campo.id}`]);
-
-  const handleExit = () => {
-  window.location.href = 'TelaInicial';
-};
 
   // Função para gerar e baixar o relatório em PDF
   const baixarRelatorioPDF = () => {
@@ -366,7 +402,7 @@ export default function QuizMecanica() {
       </button>
       
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold text-green-600 mb-4">Quiz Completo!</h1>
+        <h1 className="text-3xl font-bold !text-black mb-4">Quiz Completo!</h1>
         <p className="text-xl mb-4">Parabéns! Você completou o quiz sobre manutenção de bombas centrífugas.</p>
         <p className="text-2xl font-bold mb-6">Pontuação final: {pontuacao} pontos</p>
         <div className="flex flex-col space-y-3">
