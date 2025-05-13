@@ -228,29 +228,33 @@ export default function QuizMecanica() {
 
   // Verificar resposta e mostrar feedback
   const verificarRespostas = () => {
-  const fase = fases[faseAtual];
-  let todasCorretas = true;
+    const fase = fases[faseAtual];
+    let todasCorretas = true;
+    const novasRespostasVerificadas = {...respostasVerificadas};
   
-  fase.campos.forEach(campo => {
-    if (camposVisiveis[campo.id]) {
-      const respostaUsuario = normalizarNumero(respostas[`${fase.id}_${campo.id}`]);
-      const valorCorretoNormalizado = normalizarNumero(campo.valorCorreto);
-      
-      if (respostaUsuario !== valorCorretoNormalizado) {
-        todasCorretas = false;
+    fase.campos.forEach(campo => {
+      if (camposVisiveis[campo.id]) {
+        const respostaUsuario = normalizarNumero(respostas[`${fase.id}_${campo.id}`]);
+        const valorCorretoNormalizado = normalizarNumero(campo.valorCorreto);
+        
+        // Marca a resposta como verificada
+        novasRespostasVerificadas[`${fase.id}_${campo.id}`] = true;
+        
+        if (respostaUsuario !== valorCorretoNormalizado) {
+          todasCorretas = false;
+        }
       }
+    });
+  
+    setRespostasVerificadas(novasRespostasVerificadas);
+    setFeedbackCorreto(todasCorretas);
+    setFeedbackVisible(true);
+  
+    if (todasCorretas && !faseJaPontuada[faseAtual]) {
+      setPontuacao(pontuacao + 100);
+      setFaseJaPontuada({...faseJaPontuada, [faseAtual]: true});
     }
-  });
-  
-  setFeedbackCorreto(todasCorretas);
-  setFeedbackVisible(true);
-  
-  if (todasCorretas && !faseJaPontuada[faseAtual]) {
-    setPontuacao(pontuacao + 100);
-    setFaseJaPontuada({...faseJaPontuada, [faseAtual]: true});
-  }
-  
-};
+  };
 
   // Próxima fase
   const proximaFase = () => {
