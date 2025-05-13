@@ -13,6 +13,8 @@ export default function QuizMecanica() {
   const [isMobile, setIsMobile] = useState(false);
   const [camposVisiveis, setCamposVisiveis] = useState({});
   const [showExitModal, setShowExitModal] = useState(false);
+  const [respostasVerificadas, setRespostasVerificadas] = useState({});
+  const [faseJaPontuada, setFaseJaPontuada] = useState({});
   
   // Detectar tamanho da tela e ajustar para mobile
   useEffect(() => {
@@ -176,42 +178,49 @@ export default function QuizMecanica() {
     }
   ];
 
+  const normalizarNumero = (valor) => {
+  if (!valor) return '';
+  // Substitui vírgula por ponto e remove caracteres não numéricos exceto ponto e vírgula
+  return valor.toString()
+    .replace(/[^\d,.-]/g, '')  // Remove tudo que não for número, vírgula, ponto ou sinal negativo
+    .replace(/,/g, '.');       // Substitui vírgula por ponto
+};
+
   // Verificar resposta e mostrar feedback
   const verificarRespostas = () => {
-    const fase = fases[faseAtual];
-    let todasCorretas = true;
-    
-    fase.campos.forEach(campo => {
-      const respostaUsuario = respostas[`${fase.id}_${campo.id}`];
-      if (respostaUsuario !== campo.valorCorreto) {
+  const fase = fases[faseAtual];
+  let todasCorretas = true;
+  
+  fase.campos.forEach(campo => {
+    if (camposVisiveis[campo.id]) {
+      const respostaUsuario = normalizarNumero(respostas[`${fase.id}_${campo.id}`]);
+      const valorCorretoNormalizado = normalizarNumero(campo.valorCorreto);
+      
+      if (respostaUsuario !== valorCorretoNormalizado) {
         todasCorretas = false;
       }
-    });
-    
-    setFeedbackCorreto(todasCorretas);
-    setFeedbackVisible(true);
-    
-    if (todasCorretas) {
-      setPontuacao(pontuacao + 100);
     }
-    
-    // Esconder feedback após 3 segundos
-    setTimeout(() => {
-      setFeedbackVisible(false);
-      if (todasCorretas && faseAtual < fases.length - 1) {
-        setFaseAtual(faseAtual + 1);
-      } else if (todasCorretas && faseAtual === fases.length - 1) {
-        setQuizCompletado(true);
-      }
-    }, 3000);
-  };
+  });
+  
+  setFeedbackCorreto(todasCorretas);
+  setFeedbackVisible(true);
+  
+  if (todasCorretas && !faseJaPontuada[faseAtual]) {
+    setPontuacao(pontuacao + 100);
+    setFaseJaPontuada({...faseJaPontuada, [faseAtual]: true});
+  }
+  
+};
 
   // Próxima fase
   const proximaFase = () => {
-    if (faseAtual < fases.length - 1) {
-      setFaseAtual(faseAtual + 1);
-    }
-  };
+  setFeedbackVisible(false);
+  if (faseAtual < fases.length - 1) {
+    setFaseAtual(faseAtual + 1);
+  } else {
+    setQuizCompletado(true);
+  }
+};
 
   // Fase anterior
   const faseAnterior = () => {
@@ -222,27 +231,34 @@ export default function QuizMecanica() {
 
   // Reiniciar quiz
   const reiniciarQuiz = () => {
-    setFaseAtual(0);
-    setRespostas({});
-    setPontuacao(0);
-    setQuizCompletado(false);
-    setCamposVisiveis({});
-  };
+  setFaseAtual(0);
+  setRespostas({});
+  setPontuacao(0);
+  setQuizCompletado(false);
+  setCamposVisiveis({});
+  setRespostasVerificadas({});
+  setFaseJaPontuada({});
+};
 
   // Atualizar respostas
   const handleInputChange = (faseId, campoId, valor) => {
+  const valorNormalizado = normalizarNumero(valor);
+  
+  // Verifica se o valor normalizado é um número válido ou string vazia
+  if (valorNormalizado === '' || !isNaN(valorNormalizado)) {
     setRespostas({
       ...respostas,
-      [`${faseId}_${campoId}`]: valor
+      [`${faseId}_${campoId}`]: valorNormalizado
     });
-  };
+  }
+};
 
   const faseDados = fases[faseAtual];
 
   // Verificar se todas as respostas da fase atual foram preenchidas
-  const todasRespostasPreenchidas = faseDados.campos.every(
-    campo => camposVisiveis[campo.id] ? respostas[`${faseDados.id}_${campo.id}`] : true
-  );
+  const todasRespostasPreenchidas = faseDados.campos
+  .filter(campo => camposVisiveis[campo.id])
+  .every(campo => respostas[`${faseDados.id}_${campo.id}`]);
 
   const handleExit = () => {
   window.location.href = 'TelaInicial';
@@ -512,14 +528,31 @@ export default function QuizMecanica() {
                   <input
                     type="text"
                     value={respostas[`${faseDados.id}_${campo.id}`] || ''}
-                    onChange={(e) => handleInputChange(faseDados.id, campo.id, e.target.value)}
-                    className="border border-gray-300 rounded px-2 py-1 text-center"
+                    onChange={(e) => {
+                      if (!respostasVerificadas[`${faseDados.id}_${campo.id}`]) {
+                        handleInputChange(faseDados.id, campo.id, e.target.value);
+                      }
+                    }}
+                    onKeyPress={(e) => {
+                      if (respostasVerificadas[`${faseDados.id}_${campo.id}`] || 
+                          (!/[0-9,.-]/.test(e.key) && 
+                          e.key !== 'Backspace' && 
+                          e.key !== 'Delete' && 
+                          e.key !== 'ArrowLeft' && 
+                          e.key !== 'ArrowRight')) {
+                        e.preventDefault();
+                      }
+                    }}
+                    className={`border border-gray-300 rounded px-2 py-1 text-center ${
+                      respostasVerificadas[`${faseDados.id}_${campo.id}`] ? 'bg-gray-100 cursor-not-allowed' : ''
+                    }`}
                     style={{
-                      width: isMobile ? (campo.inputWidthMobile || '80px') : (campo.inputWidth || '100%'),
-                      height: isMobile ? '28px' : (campo.inputHeight || 'auto'),
+                      width: isMobile ? (campo.inputWidthMobile || '80px') : (campo.inputWidth || '100px'),
+                      height: isMobile ? '28px' : (campo.inputHeight || '32px'),
                       fontSize: isMobile ? '0.8rem' : '1rem'
                     }}
-                    placeholder="0.0"
+                    placeholder="0,0"
+                    readOnly={respostasVerificadas[`${faseDados.id}_${campo.id}`]}
                   />
                 </div>
               ) : (
@@ -543,49 +576,77 @@ export default function QuizMecanica() {
 
           {/* Feedback visual - responsivo */}
           {feedbackVisible && (
-            <div className={`fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50`}>
-              <div className={`p-4 md:p-6 rounded-lg shadow-lg ${feedbackCorreto ? 'bg-green-100' : 'bg-red-100'} max-w-xs md:max-w-sm mx-4`}>
-                <div className="text-center">
-                  <div className={`inline-flex items-center justify-center ${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-full mb-3 md:mb-4 ${feedbackCorreto ? 'bg-green-500' : 'bg-red-500'}`}>
-                    <span className={`text-white ${isMobile ? 'text-xl' : 'text-2xl'}`}>
-                      {feedbackCorreto ? '✓' : '✗'}
-                    </span>
-                  </div>
-                  <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`}>
-                    {feedbackCorreto ? 'Correto!' : 'Incorreto!'}
-                  </h3>
-                  <p className={`${isMobile ? 'text-sm' : 'text-base'}`}>
-                    {feedbackCorreto 
-                      ? 'Parabéns! Todas as medidas estão corretas.' 
-                      : 'Verifique novamente os valores inseridos.'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div className={`p-4 md:p-6 rounded-lg shadow-lg ${feedbackCorreto ? 'bg-green-100' : 'bg-red-100'} max-w-xs md:max-w-sm mx-4`}>
+      <div className="text-center">
+        <div className={`inline-flex items-center justify-center ${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-full mb-3 md:mb-4 ${feedbackCorreto ? 'bg-green-500' : 'bg-red-500'}`}>
+          <span className={`text-white ${isMobile ? 'text-xl' : 'text-2xl'}`}>
+            {feedbackCorreto ? '✓' : '✗'}
+          </span>
+        </div>
+        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`}>
+          {feedbackCorreto ? 'Correto!' : 'Incorreto!'}
+        </h3>
+        <p className={`${isMobile ? 'text-sm' : 'text-base'} mb-4`}>
+          {feedbackCorreto 
+            ? 'Parabéns! Todas as medidas estão corretas.' 
+            : 'Verifique novamente os valores inseridos.'}
+        </p>
+        <button
+          onClick={() => {
+            setFeedbackVisible(false);
+            if (faseAtual < fases.length - 1) {
+              setFaseAtual(faseAtual + 1);
+            } else {
+              setQuizCompletado(true);
+            }
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
+        >
+          Continuar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
           {/* Botões de navegação e verificação - responsivos */}
           <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex justify-between'} mt-6`}>
             <button
               onClick={faseAnterior}
               disabled={faseAtual === 0}
-              className={`${isMobile ? 'w-full' : 'px-4'} py-2 rounded-lg ${faseAtual === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+              className={`${isMobile ? 'w-full' : 'px-4'} py-2 rounded-lg ${
+                faseAtual === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
             >
               Anterior
             </button>
             
-            <button
-              onClick={verificarRespostas}
-              disabled={!todasRespostasPreenchidas}
-              className={`${isMobile ? 'w-full' : 'px-4'} py-2 rounded-lg ${!todasRespostasPreenchidas ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white'}`}
-            >
-              Verificar Respostas
-            </button>
+            <div className="flex flex-col items-center">
+              <button
+                onClick={verificarRespostas}
+                disabled={!todasRespostasPreenchidas || Object.keys(camposVisiveis).length === 0}
+                className={`${isMobile ? 'w-full' : 'px-4'} py-2 rounded-lg ${
+                  !todasRespostasPreenchidas || Object.keys(camposVisiveis).length === 0
+                    ? 'bg-gray-300 cursor-not-allowed' 
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                Verificar Respostas
+              </button>
+              {Object.keys(camposVisiveis).length === 0 && (
+                <p className="text-red-500 text-sm mt-2 text-center">
+                  Clique nos botões na imagem para adicionar os valores a serem verificados
+                </p>
+              )}
+            </div>
             
             <button
               onClick={proximaFase}
               disabled={faseAtual === fases.length - 1}
-              className={`${isMobile ? 'w-full' : 'px-4'} py-2 rounded-lg ${faseAtual === fases.length - 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+              className={`${isMobile ? 'w-full' : 'px-4'} py-2 rounded-lg ${
+                faseAtual === fases.length - 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
             >
               Próxima
             </button>
