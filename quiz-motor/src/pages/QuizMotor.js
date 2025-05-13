@@ -7,8 +7,6 @@ export default function QuizMecanica() {
   const [faseAtual, setFaseAtual] = useState(0);
   const [respostas, setRespostas] = useState({});
   const [pontuacao, setPontuacao] = useState(0);
-  const [feedbackVisible, setFeedbackVisible] = useState(false);
-  const [feedbackCorreto, setFeedbackCorreto] = useState(false);
   const [quizCompletado, setQuizCompletado] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
   const [isMobile, setIsMobile] = useState(false);
@@ -16,6 +14,13 @@ export default function QuizMecanica() {
   const [showExitModal, setShowExitModal] = useState(false);
   const [respostasVerificadas, setRespostasVerificadas] = useState({});
   const [faseJaPontuada, setFaseJaPontuada] = useState({});
+  const [gameOver, setGameOver] = useState(false);
+  const [motivoGameOver, setMotivoGameOver] = useState('');
+  const [progresso, setProgresso] = useState({
+    ultimaFaseLiberada: 1, // Começa na fase 1
+    camposRespondidos: []
+  });
+  const [ordemCamposRespondidos, setOrdemCamposRespondidos] = useState([]);
 
   // Detectar tamanho da tela e ajustar para mobile
   useEffect(() => {
@@ -37,6 +42,27 @@ export default function QuizMecanica() {
   useEffect(() => {
     setCamposVisiveis({});
   }, [faseAtual]);
+  
+  // Por este:
+  useEffect(() => {
+    // Só reseta os campos visíveis se estiver avançando para uma fase não visitada
+    if (faseAtual > progresso.ultimaFaseLiberada - 1) {
+      setCamposVisiveis({});
+    } else {
+      // Quando voltar, mostra os campos já respondidos
+      const camposDaFase = fases[faseAtual].campos;
+      const novosCamposVisiveis = {};
+      
+      camposDaFase.forEach(campo => {
+        const campoKey = `${fases[faseAtual].id}_${campo.id}`;
+        if (progresso.camposRespondidos.includes(campoKey)) {
+          novosCamposVisiveis[campo.id] = true;
+        }
+      });
+      
+      setCamposVisiveis(novosCamposVisiveis);
+    }
+  }, [faseAtual]);
 
   const comecarQuiz = () => {
     setShowIntro(false);
@@ -44,11 +70,47 @@ export default function QuizMecanica() {
 
   // Função para mostrar um campo quando o botão é clicado
   const mostrarCampo = (campoId) => {
+    // Verifica se já existe campo visível não verificado
+    const algumCampoAbertoNaoVerificado = faseDados.campos.some(campo => 
+      camposVisiveis[campo.id] &&
+      !respostasVerificadas[`${faseDados.id}_${campo.id}`]
+    );
+  
+    if (algumCampoAbertoNaoVerificado) {
+      setMotivoGameOver('Verifique sua resposta antes');
+      setGameOver(true);
+      return;
+    }
+  
+    // Permitir abertura de campo já respondido (revisão)
+    const campoKey = `${faseDados.id}_${campoId}`;
+    if (progresso.camposRespondidos.includes(campoKey)) {
+      setCamposVisiveis({
+        ...camposVisiveis,
+        [campoId]: true
+      });
+      return;
+    }
+  
+    // Enforce ordem dos campos não respondidos
+    const camposDaFase = faseDados.campos.map(c => c.id);
+    const primeiroCampoNaoRespondido = camposDaFase.find(id => 
+      !progresso.camposRespondidos.includes(`${faseDados.id}_${id}`)
+    );
+  
+    if (campoId !== primeiroCampoNaoRespondido) {
+      setMotivoGameOver(`Siga a ordem correta! Complete o campo ${primeiroCampoNaoRespondido} primeiro.`);
+      setGameOver(true);
+      return;
+    }
+  
+    // Mostrar o campo normalmente
     setCamposVisiveis({
       ...camposVisiveis,
       [campoId]: true
     });
   };
+  
 
   // Dados das fases do quiz
   const fases = [
@@ -230,15 +292,11 @@ export default function QuizMecanica() {
   const verificarRespostas = () => {
     const fase = fases[faseAtual];
     let todasCorretas = true;
-    const novasRespostasVerificadas = {...respostasVerificadas};
-  
+    
     fase.campos.forEach(campo => {
       if (camposVisiveis[campo.id]) {
         const respostaUsuario = normalizarNumero(respostas[`${fase.id}_${campo.id}`]);
         const valorCorretoNormalizado = normalizarNumero(campo.valorCorreto);
-        
-        // Marca a resposta como verificada
-        novasRespostasVerificadas[`${fase.id}_${campo.id}`] = true;
         
         if (respostaUsuario !== valorCorretoNormalizado) {
           todasCorretas = false;
@@ -246,26 +304,136 @@ export default function QuizMecanica() {
       }
     });
   
-    setRespostasVerificadas(novasRespostasVerificadas);
-    setFeedbackCorreto(todasCorretas);
-    setFeedbackVisible(true);
-  
-    if (todasCorretas && !faseJaPontuada[faseAtual]) {
-      setPontuacao(pontuacao + 100);
-      setFaseJaPontuada({...faseJaPontuada, [faseAtual]: true});
+    if (!todasCorretas) {
+      setMotivoGameOver('Resposta incorreta! Revise os valores.');
+      setGameOver(true);
+      return;
     }
+  
+    // Atualiza progresso
+    const novosCamposRespondidos = [...progresso.camposRespondidos];
+    fase.campos.forEach(campo => {
+      if (camposVisiveis[campo.id]) {
+        novosCamposRespondidos.push(`${fase.id}_${campo.id}`);
+      }
+    });
+  
+    // Verifica se completou a fase atual
+    const faseCompleta = fase.campos.every(campo => 
+      novosCamposRespondidos.includes(`${fase.id}_${campo.id}`)
+    );
+  
+    setProgresso({
+      ultimaFaseLiberada: faseCompleta ? fase.id + 1 : progresso.ultimaFaseLiberada,
+      camposRespondidos: novosCamposRespondidos
+    });
+  
+    
+    
+    let pontosGanhos = 0;
+const novosCamposVerificados = { ...respostasVerificadas };
+
+fase.campos.forEach(campo => {
+  if (camposVisiveis[campo.id]) {
+    const respostaUsuario = normalizarNumero(respostas[`${fase.id}_${campo.id}`]);
+    const valorCorretoNormalizado = normalizarNumero(campo.valorCorreto);
+
+    if (respostaUsuario === valorCorretoNormalizado && !respostasVerificadas[`${fase.id}_${campo.id}`]) {
+      pontosGanhos += 100;
+      novosCamposVerificados[`${fase.id}_${campo.id}`] = true;
+    } else if (respostaUsuario !== valorCorretoNormalizado) {
+      todasCorretas = false;
+    }
+  }
+});
+
+setPontuacao(pontuacao + pontosGanhos);
+setRespostasVerificadas(novosCamposVerificados);
+  };
+
+  const GameOverScreen = ({ motivo, onRestart, onExit }) => {
+    const explicacoes = {
+      'Ordem incorreta! Complete o campo 1 primeiro.':
+        'Dentro de cada fase, siga a numeração dos campos na ordem correta.',
+      'Complete todos os campos antes de avançar!':
+        'Você precisa preencher e acertar todas as medições da fase atual antes de prosseguir.',
+      'Resposta incorreta! Revise os valores.':
+        'Consulte o manual técnico para as especificações corretas.'
+    };
+  
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+          <div className="text-center">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+              <svg className="h-10 w-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Game Over!</h3>
+            <p className="text-sm text-gray-500 mb-1">{motivo}</p>
+            <p className="text-sm text-gray-700 mb-6">{explicacoes[motivo]}</p>
+            
+            <div className="flex flex-col space-y-3">
+              <button
+                onClick={onRestart}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+              >
+                Reiniciar Quiz
+              </button>
+              <button
+                onClick={onExit}
+                className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+              >
+                Voltar para Tela Inicial
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Próxima fase
   const proximaFase = () => {
-  setFeedbackVisible(false);
-  if (faseAtual < fases.length - 1) {
-    setFaseAtual(faseAtual + 1);
-  } else {
-    setQuizCompletado(true);
-  }
-};
+    const todosCampos = faseDados.campos;
+  
+    // Verifica se todos os campos da fase foram revelados
+    const todosVisiveis = todosCampos.every(campo => camposVisiveis[campo.id]);
+    if (!todosVisiveis) {
+      setMotivoGameOver('Complete todos os campos antes de avançar!');
+      setGameOver(true);
+      return;
+    }
+  
+    // Verifica se todos os campos foram preenchidos
+    const todosPreenchidos = todosCampos.every(campo =>
+      respostas[`${faseDados.id}_${campo.id}`]
+    );
+    if (!todosPreenchidos) {
+      setMotivoGameOver('Complete todos os campos antes de avançar!');
+      setGameOver(true);
+      return;
+    }
+  
+    // Verifica se todos os campos foram verificados
+    const todosVerificados = todosCampos.every(campo =>
+      respostasVerificadas[`${faseDados.id}_${campo.id}`]
+    );
+    if (!todosVerificados) {
+      setMotivoGameOver('Verifique sua resposta antes');
+      setGameOver(true);
+      return;
+    }
 
+    // Avançar para a próxima fase
+    if (faseAtual < fases.length - 1) {
+      setFaseAtual(faseAtual + 1);
+    } else {
+      setQuizCompletado(true);
+    }
+  };
+  
   // Fase anterior
   const faseAnterior = () => {
     if (faseAtual > 0) {
@@ -275,14 +443,51 @@ export default function QuizMecanica() {
 
   // Reiniciar quiz
   const reiniciarQuiz = () => {
-  setFaseAtual(0);
-  setRespostas({});
-  setPontuacao(0);
-  setQuizCompletado(false);
-  setCamposVisiveis({});
-  setRespostasVerificadas({});
-  setFaseJaPontuada({});
-};
+    setFaseAtual(0);
+    setRespostas({});
+    setPontuacao(0);
+    setQuizCompletado(false);
+    setCamposVisiveis({});
+    setFaseJaPontuada({});
+    setGameOver(false);
+    setRespostasVerificadas({});
+    setProgresso({
+      ultimaFaseLiberada: 1,
+      camposRespondidos: []
+    });
+  };
+
+  const finalizarQuiz = () => {
+    const camposVisiveisDaFase = faseDados.campos.filter(campo => camposVisiveis[campo.id]);
+  
+    if (camposVisiveisDaFase.length === 0) {
+      setMotivoGameOver('Complete todos os campos antes de encerrar!');
+      setGameOver(true);
+      return;
+    }
+  
+    const todosPreenchidos = camposVisiveisDaFase.every(campo =>
+      respostas[`${faseDados.id}_${campo.id}`]
+    );
+  
+    if (!todosPreenchidos) {
+      setMotivoGameOver('Complete todos os campos antes de encerrar!');
+      setGameOver(true);
+      return;
+    }
+  
+    const todosVerificados = camposVisiveisDaFase.every(campo =>
+      respostasVerificadas[`${faseDados.id}_${campo.id}`]
+    );
+  
+    if (!todosVerificados) {
+      setMotivoGameOver('Verifique sua resposta antes de encerrar');
+      setGameOver(true);
+      return;
+    }
+  
+    setQuizCompletado(true);
+  };  
 
   // Atualizar respostas
   const handleInputChange = (faseId, campoId, valor) => {
@@ -469,6 +674,16 @@ export default function QuizMecanica() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       {/* Cabeçalho */}
+      {gameOver && (
+      <GameOverScreen
+        motivo={motivoGameOver}
+        onRestart={() => {
+          setGameOver(false);
+          reiniciarQuiz();
+        }}
+        onExit={() => window.location.href = '/TelaInicial'}
+      />
+    )}
       <header className="bg-blue-600 text-white p-4">
         {/* Botão de sair */}
         <button 
@@ -548,11 +763,18 @@ export default function QuizMecanica() {
             />
             
             {/* Inputs posicionados em torno da imagem - mostrados apenas se visíveis */}
-            {faseDados.campos.map((campo) => (
-              camposVisiveis[campo.id] ? (
+            {faseDados.campos.map((campo) => {
+              const campoKey = `${faseDados.id}_${campo.id}`;
+              const respostaCorreta = respostasVerificadas[campoKey] &&
+                normalizarNumero(respostas[campoKey]) === normalizarNumero(campo.valorCorreto);
+
+              return camposVisiveis[campo.id] ? (
                 <div 
                   key={campo.id}
-                  className="absolute bg-white border-2 border-blue-500 rounded-lg shadow-md"
+                  className={`
+                    absolute rounded-lg shadow-md
+                    ${respostaCorreta ? 'bg-green-500 border-green-600 text-white' : 'bg-white border-blue-500 text-black'}
+                  `}
                   style={{ 
                     left: `${isMobile ? (campo.xMobile || campo.x) : campo.x}%`, 
                     top: `${isMobile ? (campo.yMobile || campo.y) : campo.y}%`,
@@ -567,14 +789,14 @@ export default function QuizMecanica() {
                   </label>
                   <input
                     type="text"
-                    value={respostas[`${faseDados.id}_${campo.id}`] || ''}
+                    value={respostas[campoKey] || ''}
                     onChange={(e) => {
-                      if (!respostasVerificadas[`${faseDados.id}_${campo.id}`]) {
+                      if (!respostasVerificadas[campoKey]) {
                         handleInputChange(faseDados.id, campo.id, e.target.value);
                       }
                     }}
                     onKeyPress={(e) => {
-                      if (respostasVerificadas[`${faseDados.id}_${campo.id}`] || 
+                      if (respostasVerificadas[campoKey] || 
                           (!/[0-9,.-]/.test(e.key) && 
                           e.key !== 'Backspace' && 
                           e.key !== 'Delete' && 
@@ -583,16 +805,18 @@ export default function QuizMecanica() {
                         e.preventDefault();
                       }
                     }}
-                    className={`border border-gray-300 rounded px-2 py-1 text-center ${
-                      respostasVerificadas[`${faseDados.id}_${campo.id}`] ? 'bg-gray-100 cursor-not-allowed' : ''
-                    }`}
+                    className={`
+                      border rounded px-2 py-1 text-center w-full
+                      ${respostasVerificadas[campoKey] ? 'cursor-not-allowed' : ''}
+                    `}
                     style={{
+                      backgroundColor: respostaCorreta ? 'transparent' : 'white',
                       width: isMobile ? (campo.inputWidthMobile || '80px') : (campo.inputWidth || '100px'),
                       height: isMobile ? '28px' : (campo.inputHeight || '32px'),
                       fontSize: isMobile ? '0.8rem' : '1rem'
                     }}
                     placeholder="0,0"
-                    readOnly={respostasVerificadas[`${faseDados.id}_${campo.id}`]}
+                    readOnly={respostasVerificadas[campoKey]}
                   />
                 </div>
               ) : (
@@ -610,45 +834,10 @@ export default function QuizMecanica() {
                 >
                   {campo.labelMain}
                 </button>
-              )
-            ))}
-          </div>
+              );
+            })}
 
-          {/* Feedback visual - responsivo */}
-          {feedbackVisible && (
-  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-    <div className={`p-4 md:p-6 rounded-lg shadow-lg ${feedbackCorreto ? 'bg-green-100' : 'bg-red-100'} max-w-xs md:max-w-sm mx-4`}>
-      <div className="text-center">
-        <div className={`inline-flex items-center justify-center ${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-full mb-3 md:mb-4 ${feedbackCorreto ? 'bg-green-500' : 'bg-red-500'}`}>
-          <span className={`text-white ${isMobile ? 'text-xl' : 'text-2xl'}`}>
-            {feedbackCorreto ? '✓' : '✗'}
-          </span>
-        </div>
-        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`}>
-          {feedbackCorreto ? 'Correto!' : 'Incorreto!'}
-        </h3>
-        <p className={`${isMobile ? 'text-sm' : 'text-base'} mb-4`}>
-          {feedbackCorreto 
-            ? 'Parabéns! Todas as medidas estão corretas.' 
-            : 'Verifique novamente os valores inseridos.'}
-        </p>
-        <button
-          onClick={() => {
-            setFeedbackVisible(false);
-            if (faseAtual < fases.length - 1) {
-              setFaseAtual(faseAtual + 1);
-            } else {
-              setQuizCompletado(true);
-            }
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
-        >
-          Continuar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+          </div>
 
           {/* Botões de navegação e verificação - responsivos */}
           <div className={`${isMobile ? 'flex flex-col space-y-2' : 'flex justify-between'} mt-6`}>
@@ -680,16 +869,21 @@ export default function QuizMecanica() {
                 </p>
               )}
             </div>
-            
-            <button
-              onClick={proximaFase}
-              disabled={faseAtual === fases.length - 1}
-              className={`${isMobile ? 'w-full' : 'px-4'} py-2 rounded-lg ${
-                faseAtual === fases.length - 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
-              }`}
-            >
-              Próxima
-            </button>
+            {faseAtual === fases.length - 1 ? (
+              <button
+                onClick={finalizarQuiz}
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+              >
+                Finalizar Quiz
+              </button>
+            ) : (
+              <button
+                onClick={proximaFase}
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg"
+              >
+                Próxima
+              </button>
+            )}
           </div>
         </div>
       </main>
