@@ -7,6 +7,7 @@ import './App.css';
 import VerManual from './pages/VerManual';
 import Footer from './components/Footer';
 import ManualSeguranca from './pages/ManualSeguranca';
+import Landing from './pages/Landing';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <div className="min-h-screen flex flex-col">
         <Routes>
           <Route path="/" element={<LoginPage />} />
+          <Route path="/Landing" element={<Landing />} />
           <Route path="/TelaInicial" element={<><TelaInicial /><Footer /></>} />
           <Route path="/QuizMotor" element={<><QuizMotor /><Footer /></>} />
           <Route path="/VerManual" element={<><VerManual /><Footer /></>} />
