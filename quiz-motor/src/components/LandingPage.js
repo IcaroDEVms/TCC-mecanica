@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Wrench,
   Cog,
@@ -55,8 +56,8 @@ export default function LandingPage() {
         return (
           <div className="space-y-4 animate-fadeIn">
             <h3 className="text-xl font-bold">Sobre o Projeto</h3>
-            <p>O Sistema de TCC em Mecânica é uma plataforma inovadora desenvolvida pelos alunos do curso técnico do SENAI. Nosso objetivo é criar uma ferramenta que integre os conhecimentos adquiridos durante o curso e apresente soluções para problemas reais da indústria mecânica.</p>
-            <p>Este projeto é resultado de meses de pesquisa, desenvolvimento e testes práticos, aplicando os princípios fundamentais da engenharia mecânica em um sistema funcional e eficiente.</p>
+            <p>O Manual Rep&Aprova é uma maneira mais simples de aprender sobre elementos da mecânica. O sistema busca ensinar alunos da escola técnica a como entender mais sobre o funcionamento da bomba centrífuga</p>
+            <p>Este projeto é resultado de semanas de pesquisa, desenvolvimento e testes práticos, aplicando os princípios fundamentais da engenharia mecânica.</p>
           </div>
         );
       case 'recursos':
@@ -65,10 +66,10 @@ export default function LandingPage() {
             <h3 className="text-xl font-bold">Recursos Principais</h3>
             <ul className="space-y-2">
               <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Simulação de sistemas mecânicos em tempo real</li>
-              <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Cálculos automáticos de resistência de materiais</li>
-              <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Biblioteca de componentes mecânicos padronizados</li>
+              <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Cálculos automáticos de ajustes de bomba centrífuga</li>
+              <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Entendimento fácil e educativo</li>
               <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Relatórios detalhados de análise de falhas</li>
-              <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Interface intuitiva para projetos mecânicos</li>
+              <li className="flex items-center"><ChevronRight className="text-blue-500 mr-2" size={18} /> Interface intuitiva</li>
             </ul>
           </div>
         );
@@ -117,7 +118,7 @@ export default function LandingPage() {
               <Cog size={28} className="text-blue-500 animate-spin" style={{ animationDuration: '8s' }} />
               <Cog size={18} className="text-blue-400 absolute -top-1 -right-2 animate-spin" style={{ animationDuration: '6s', animationDirection: 'reverse' }} />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">TechMech</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Rep&Aprov</h1>
           </div>
           
           <nav className="hidden md:flex space-x-8">
@@ -138,10 +139,12 @@ export default function LandingPage() {
               <div className="w-0 group-hover:w-full h-0.5 bg-blue-400 transition-all duration-300"></div>
             </a>
           </nav>
-          
-          <button className="bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-0.5 hidden md:block">
+          <Link to="/LoginPage">
+            <button className="bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-0.5 hidden md:block">
             Acessar Sistema
           </button>
+          </Link>
+          
         </div>
       </header>
       
@@ -158,15 +161,15 @@ export default function LandingPage() {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              Sistema Inovador para <br />
+              Manual Inovador para <br />
               <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                Engenharia Mecânica
+                Mecânica
               </span>
             </h1>
             
             <p className="text-slate-300 text-lg max-w-lg">
               Uma plataforma avançada desenvolvida por estudantes para revolucionar 
-              projetos mecânicos com tecnologia de ponta e interface intuitiva.
+              o curso técnico de Mecânica com tecnologia de ponta e interface intuitiva.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -174,13 +177,16 @@ export default function LandingPage() {
                 <span>Conheça o Projeto</span>
                 <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
               </button>
-              
-              <button className="bg-transparent border border-slate-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-slate-800/50 transition-all duration-300 flex items-center justify-center gap-2">
+              <a
+                href="https://github.com/IcaroDEVms/TCC-mecanica"
+                target="_blank"
+                rel="noopener noreferrer"
+              ><button className="bg-transparent border border-slate-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-slate-800/50 transition-all duration-300 flex items-center justify-center gap-2">
                 <span>Ver Documentação</span>
                 <BookOpen size={18} />
               </button>
-            </div>
-            
+            </a>
+            </div>  
             <div className="flex items-center gap-4 pt-6">
               <div className="flex -space-x-2">
                 <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">S</div>
@@ -196,28 +202,25 @@ export default function LandingPage() {
           
           <div className="relative">
             <div className="relative z-10 bg-slate-800/70 backdrop-blur-sm p-4 rounded-2xl border border-slate-700 shadow-xl">
-              <div className="aspect-[4/3] rounded-lg overflow-hidden relative bg-slate-900 flex items-center justify-center">
-                <div className="text-6xl text-slate-800">
-                  <div className="relative w-64 h-64">
-                    <Gear size={200} speed={15} position={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} opacity={0.8} />
-                    <Gear size={100} speed={10} position={{ top: '30%', left: '70%', transform: 'translate(-50%, -50%)' }} opacity={0.8} />
-                    <Gear size={80} speed={20} position={{ top: '70%', left: '30%', transform: 'translate(-50%, -50%)' }} opacity={0.8} />
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent opacity-70"></div>
-                <div className="absolute bottom-6 left-6 z-10">
-                  <h3 className="text-xl font-bold">Sistema TechMech</h3>
-                  <p className="text-blue-400">Versão 1.0</p>
-                </div>
+            <div className="aspect-[4/3] rounded-lg overflow-hidden relative bg-slate-900">
+              <img
+                src="https://i.imgur.com/DaxwI1b.png"
+                alt="Fundo do Sistema"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent opacity-70"></div>
+              <div className="absolute bottom-6 left-6 z-10">
+                <h3 className="text-xl font-bold">Sistema Rep&Aprov</h3>
+                <p className="text-blue-400">Versão 1.0</p>
               </div>
-              
+            </div>
               <div className="flex justify-between items-center mt-4">
                 <div className="flex space-x-2">
                   <span className="w-3 h-3 bg-red-500 rounded-full"></span>
                   <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
                   <span className="w-3 h-3 bg-green-500 rounded-full"></span>
                 </div>
-                <div className="text-xs text-slate-400">techmech.senai.2025</div>
+                <div className="text-xs text-slate-400">Rep&Aprov.senai.2025</div>
               </div>
             </div>
             
@@ -229,14 +232,7 @@ export default function LandingPage() {
           </div>
         </div>
         
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <a href="#sobre" className="flex flex-col items-center text-slate-400 hover:text-white transition-colors">
-            <span className="text-sm mb-2">Rolar para baixo</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 5v14M19 12l-7 7-7-7"/>
-            </svg>
-          </a>
-        </div>
+        
       </section>
       
       {/* About Section */}
@@ -284,17 +280,7 @@ export default function LandingPage() {
                     </button>
                   </div>
                   
-                  <div className="bg-slate-900 p-4 rounded-lg border border-slate-700">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-md bg-blue-600">
-                        <Award size={18} />
-                      </div>
-                      <h4 className="font-medium">Premiado</h4>
-                    </div>
-                    <p className="text-sm text-slate-300">
-                      Projeto finalista na Mostra de Ciência e Tecnologia do SENAI 2025.
-                    </p>
-                  </div>
+                  
                 </div>
               </div>
               
@@ -328,7 +314,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="text-sm text-slate-300">Tecnologias</p>
-                      <p className="font-medium text-white">7 integradas</p>
+                      <p className="font-medium text-white">3 integradas</p>
                     </div>
                   </div>
                 </div>
@@ -358,16 +344,12 @@ export default function LandingPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <CardFeature 
-              icon={WrenchIcon} 
-              title="Modelagem 3D" 
-              description="Crie modelos tridimensionais de peças e conjuntos mecânicos com precisão e detalhamento."
-            />
+            
             
             <CardFeature 
               icon={Cog} 
-              title="Simulação Dinâmica" 
-              description="Teste o comportamento de sistemas mecânicos em condições reais de operação."
+              title="Quiz Dinâmico" 
+              description="Teste o comportamento os seus conhecimentos mecânicos de maneira prática."
             />
             
             <CardFeature 
@@ -376,11 +358,7 @@ export default function LandingPage() {
               description="Calcule tensões, deformações e fatores de segurança em componentes mecânicos."
             />
             
-            <CardFeature 
-              icon={Clock} 
-              title="Ciclo de Vida" 
-              description="Acompanhe a durabilidade estimada dos componentes e programe manutenções preventivas."
-            />
+            
             
             <CardFeature 
               icon={BookOpen} 
@@ -388,11 +366,11 @@ export default function LandingPage() {
               description="Gere relatórios detalhados e documentação técnica para os projetos desenvolvidos."
             />
             
-            <CardFeature 
+            {/* Timeline end<CardFeature 
               icon={Users} 
               title="Colaboração" 
               description="Trabalhe em equipe com recursos de compartilhamento e controle de versões de projetos."
-            />
+            /> */}
           </div>
           
           <div className="mt-16 text-center">
@@ -533,43 +511,11 @@ export default function LandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold mb-1">CAD/CAM</h3>
-              <p className="text-sm text-slate-400">Sistema de desenho e manufatura assistidos por computador</p>
+              <h3 className="text-lg font-semibold mb-1">adicionar</h3>
+              <p className="text-sm text-slate-400">adicionar</p>
             </div>
             
-            {/* Tech 2 */}
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center transition-all duration-300 hover:bg-slate-800/80 hover:shadow-lg hover:shadow-blue-900/20 hover:-translate-y-1 group">
-              <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 group-hover:border-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-1">FEM</h3>
-              <p className="text-sm text-slate-400">Análise por método de elementos finitos</p>
-            </div>
             
-            {/* Tech 3 */}
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center transition-all duration-300 hover:bg-slate-800/80 hover:shadow-lg hover:shadow-blue-900/20 hover:-translate-y-1 group">
-              <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 group-hover:border-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-1">CFD</h3>
-              <p className="text-sm text-slate-400">Dinâmica de fluidos computacional</p>
-            </div>
-            
-            {/* Tech 4 */}
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center transition-all duration-300 hover:bg-slate-800/80 hover:shadow-lg hover:shadow-blue-900/20 hover:-translate-y-1 group">
-              <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 group-hover:border-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-1">Big Data</h3>
-              <p className="text-sm text-slate-400">Análise e processamento de grandes volumes de dados</p>
-            </div>
           </div>
           
           {/* Animated background gears */}
@@ -604,7 +550,7 @@ export default function LandingPage() {
           </div>
           
           <div className="text-center">
-            <a href="https://www.senai.br" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
+            <a href="https://www.senaibahia.com.br/cursotecnico/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
               <span>Saiba mais sobre o curso técnico de Mecânica do SENAI</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 17l9.2-9.2M17 17V7H7"></path>
@@ -655,7 +601,7 @@ export default function LandingPage() {
               </div>
               
               <p className="text-slate-300 italic">
-                "Um projeto excepcional que demonstra domínio técnico e inovação. A equipe conseguiu integrar conhecimentos teóricos e práticos de forma impressionante, criando uma solução com grande potencial de aplicação na indústria."
+                "adicionar feedback."
               </p>
             </div>
             
@@ -685,7 +631,7 @@ export default function LandingPage() {
               </div>
               
               <p className="text-slate-300 italic">
-                "Um dos melhores TCCs que já avaliei. A interface do sistema é intuitiva e as funcionalidades atendem necessidades reais da indústria. Este projeto tem potencial comercial e poderia ser implementado em empresas do setor."
+                "adiciona feedback."
               </p>
             </div>
           </div>
@@ -790,7 +736,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="text-sm text-slate-400">E-mail</p>
-                      <p className="font-medium text-white">contato@techmech.senai.br</p>
+                      <p className="font-medium text-white">contato@Rep&Aprov.senai.br</p>
                     </div>
                   </div>
                   
@@ -878,11 +824,11 @@ export default function LandingPage() {
                   <Cog size={16} className="text-blue-400 absolute -top-1 -right-1" />
                 </div>
                 <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                  TechMech
+                  Rep&Aprov
                 </h2>
               </div>
               <p className="text-slate-400 text-sm">
-                Sistema inovador para projetos mecânicos desenvolvido como TCC do curso técnico em Mecânica do SENAI.
+                Manual inovador para projetos mecânicos desenvolvido como TCC do curso técnico em Mecânica do SENAI.
               </p>
             </div>
             
@@ -929,7 +875,7 @@ export default function LandingPage() {
           
           <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-slate-400">
-              © 2025 TechMech. Todos os direitos reservados.
+              © 2025 Rep&Aprov. Todos os direitos reservados.
             </p>
             
             <div className="flex gap-6 text-sm">
