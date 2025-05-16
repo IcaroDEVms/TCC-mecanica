@@ -2,6 +2,203 @@ import { useState, useEffect } from 'react';
 import {jsPDF} from 'jspdf';
 
 export default function QuizMecanica() {
+
+  // Dados das fases do quiz
+  const fases = [
+  {
+    id: 1,
+    titulo: "Ajuste da Folga do Rotor",
+    descricao: "Meça as dimensões necessárias para o ajuste da folga do rotor da bomba centrífuga",
+    imagem: "../manual/M-01.png",
+    imagemMobile: "../manual/M-01.png",
+    campos: [
+      {
+        id: 1,
+        label: "Excentricidade do Anel (mm)",
+        labelMain:'Medição de Excentricidade do anel de desgaste do rotor LOA',
+        x: 61, y: 31, xMobile: 75, yMobile: 15,
+        valorCorreto: "0.07",
+        width: "160px", minWidth: "120px",
+        widthMobile: "140px",
+        inputWidth: "100px", inputWidthMobile: "80px", inputHeight: "22px"
+      },
+      {
+        id: 2,
+        label: "Excentricidade do cubo (mm)",
+        labelMain:"Medição de Excentricidade do cubo do aclopamento",
+        x: 61, y: 85, xMobile: 70, yMobile: 50,
+        valorCorreto: "0.07",
+        width: "170px", minWidth: "150px",
+        widthMobile: "140px",
+        inputWidth: "100px", inputWidthMobile: "80px", inputHeight: "32px"
+      }
+    ]
+  },
+  {
+    id: 2,
+    titulo: "Alinhamento do Acoplamento",
+    descricao: "Identifique as dimensões corretas para o alinhamento do acoplamento da bomba",
+    imagem: "../manual/M-02.png",
+    imagemMobile: "../manual/M-02.png",
+    campos: [
+      {
+        id: 3,
+        label: "Desalinhamento Radial (mm)",
+        labelMain:"Medição de excentricidade da guia de caixa de mancais",
+        x: 36, y: 39, xMobile: 75, yMobile: 15,
+        valorCorreto: "0.07",
+        width: "150px", widthMobile: "140px",
+        inputWidth: "100px", inputWidthMobile: "80px"
+      },
+      {
+        id: 4,
+        label: "Desalinhamento Angular (mm)",
+        labelMain:"Medição de Excentricidade do anel de desgaste do motor LA",
+        x: 67, y: 39, xMobile: 70, yMobile: 50,
+        valorCorreto: "0.07",
+        width: "220px", widthMobile: "140px",
+        inputWidth: "100px", inputWidthMobile: "80px"
+      }
+    ]
+  },
+  {
+    id: 3,
+    titulo: "Dimensionamento do Selo Mecânico",
+    descricao: "Insira as medidas corretas para a instalação do selo mecânico",
+    imagem: "../manual/M-03.png",
+    imagemMobile: "../manual/M-03.png",
+    campos: [
+      {
+        id: 5,
+        label: "Comprimento de Inserção (mm)",
+        labelMain: "Medição de excentricidade do anel de desgaste da caixa de selagem",
+        x: 33, y: 40, xMobile: 75, yMobile: 15,
+        valorCorreto: "12.5",
+        width: "220px", widthMobile: "140px",
+        inputWidth: "100px", inputWidthMobile: "80px"
+      },
+      {
+        id: 6,
+        label: "Diâmetro Interno (mm)",
+        labelMain: "Medição da excentricidade das guias dos selos componente e selo cartucho",
+        x: 33, y: 55, xMobile: 70, yMobile: 50,
+        valorCorreto: "45.2",
+        width: "200px", widthMobile: "140px",
+        inputWidth: "100px", inputWidthMobile: "80px"
+      },
+      {
+        id: 7,
+        label: "Espessura da Face (mm)",
+        labelMain: "Medição da excentricidade da guia da caixa de selagem",
+        x: 68, y: 45, xMobile: 65, yMobile: 85,
+        valorCorreto: "1.8",
+        width: "200px", widthMobile: "140px",
+        inputWidth: "100px", inputWidthMobile: "80px"
+      }
+    ]
+  },
+  {
+    id: 4,
+    titulo: "Verificação de Empeno Máximo",
+    descricao: "Medição de empeno máximo (RunOut) nos rotores e cubo do acoplamento.",
+    imagem: "../manual/M-04.png",
+    imagemMobile: "../manual/M-04.png",
+    campos: [
+      {
+        id: 8,
+        label: "Empeno nos Rotores (mm)",
+        labelMain: "Medição de empeno na região dos rotores",
+        x: 20, y: 20, xMobile: 25, yMobile: 15,
+        valorCorreto: "0.03",
+        width: "180px", inputWidth: "100px", inputHeight: "28px"
+      },
+      {
+        id: 9,
+        label: "Empeno no Cubo (mm)",
+        labelMain: "Medição de empeno na região do cubo do acoplamento",
+        x: 50, y: 90, xMobile: 55, yMobile: 70,
+        valorCorreto: "0.03",
+        width: "180px", inputWidth: "100px", inputHeight: "28px"
+      }
+    ]
+  },
+  {
+    id: 5,
+    titulo: "Verificação de Perpendicularidade",
+    descricao: "Medição de perpendicularidade em várias partes da bomba.",
+    imagem: "../manual/M-05.png",
+    imagemMobile: "../manual/M-05.png",
+    campos: [
+      {
+        id: 10,
+        label: "Encosto da Caixa de Selagem (mm)",
+        labelMain: "Perpendicularidade da posição 10",
+        x: 20, y: 20, xMobile: 25, yMobile: 15,
+        valorCorreto: "0.03",
+        width: "200px", inputWidth: "100px", inputHeight: "28px"
+      },
+      {
+        id: 11,
+        label: "Encosto da Carcaça (mm)",
+        labelMain: "Perpendicularidade da posição 11",
+        x: 70, y: 20, xMobile: 75, yMobile: 15,
+        valorCorreto: "0.03",
+        width: "200px", inputWidth: "100px", inputHeight: "28px"
+      },
+      {
+        id: 12,
+        label: "Encosto da Sobreposta (mm)",
+        labelMain: "Perpendicularidade da posição 12",
+        x: 50, y: 50, xMobile: 55, yMobile: 45,
+        valorCorreto: "0.05",
+        width: "200px", inputWidth: "100px", inputHeight: "28px"
+      },
+      {
+        id: 13,
+        label: "Cubo do Acoplamento (mm)",
+        labelMain: "Perpendicularidade da posição 13",
+        x: 50, y: 90, xMobile: 55, yMobile: 80,
+        valorCorreto: "0.03",
+        width: "200px", inputWidth: "100px", inputHeight: "28px"
+      }
+    ]
+  },
+  {
+    id: 6,
+    titulo: "Folgas Máximas para Rolamentos",
+    descricao: "Informe os limites máximos de folga interna conforme o diâmetro do eixo.",
+    imagem: "../manual/M-06.png",
+    imagemMobile: "../manual/M-06.png",
+    campos: [
+      {
+        id: 14,
+        label: "Folga Interna para Rolamento (mm)",
+        labelMain: "Folga da posição 14 (Rolamentos)",
+        x: 20, y: 30, xMobile: 25, yMobile: 20,
+        valorCorreto: "0.03",
+        width: "220px", inputWidth: "120px", inputHeight: "28px"
+      }
+    ]
+  },
+  {
+    id: 7,
+    titulo: "Folga Axial / Escora de Rolamento",
+    descricao: "Medição do jogo axial ou de escora dos rolamentos.",
+    imagem: "../manual/M-07.png",
+    imagemMobile: "../manual/M-07.png",
+    campos: [
+      {
+        id: 15,
+        label: "Folga Axial ou de Escora (mm)",
+        labelMain: "Medição do jogo axial ou escora",
+        x: 70, y: 50, xMobile: 75, yMobile: 45,
+        valorCorreto: "0.03",
+        width: "220px", inputWidth: "120px", inputHeight: "28px"
+      }
+    ]
+  }
+];
+
   // Estados para gerenciar o quiz
   const [showIntro, setShowIntro] = useState(true);
   const [faseAtual, setFaseAtual] = useState(0);
@@ -17,7 +214,7 @@ export default function QuizMecanica() {
   const [gameOver, setGameOver] = useState(false);
   const [motivoGameOver, setMotivoGameOver] = useState('');
   const [progresso, setProgresso] = useState({
-    ultimaFaseLiberada: 1, // Começa na fase 1
+    ultimaFaseLiberada: fases.length,
     camposRespondidos: []
   });
   const [ordemCamposRespondidos, setOrdemCamposRespondidos] = useState([]);
@@ -111,140 +308,6 @@ export default function QuizMecanica() {
     });
   };
   
-
-  // Dados das fases do quiz
-  const fases = [
-    {
-      id: 1,
-      titulo: "Ajuste da Folga do Rotor",
-      descricao: "Meça as dimensões necessárias para o ajuste da folga do rotor da bomba centrífuga",
-      imagem: "../manual/M-01.png",
-      imagemMobile: "../manual/M-01.png",
-      campos: [
-        { 
-          id: 1,
-          label: "Excentricidade do Anel (mm)", 
-          labelMain:'Medição de Excentricidade do anel de desgaste do rotor LOA',
-          x: 61,            // Posição X para desktop 
-          y: 31,            // Posição Y para desktop
-          xMobile: 75,      // Posição X para mobile
-          yMobile: 15,      // Posição Y para mobile
-          valorCorreto: "0.07",
-          width: "160px",         // Largura da caixa para desktop
-          minWidth: "120px",      // Largura mínima
-          widthMobile: "140px",   // Largura para mobile
-          inputWidth: "100px",    // Largura do input para desktop
-          inputWidthMobile: "80px", // Largura do input para mobile
-          inputHeight: "22px"     // Altura do input
-        },
-        { 
-          id: 2, 
-          label: "Excentricidade do cubo (mm)", 
-          labelMain:"Medição de Excentricidade do cubo do aclopamento",
-          x: 61, 
-          y: 85,
-          xMobile: 70,
-          yMobile: 50, 
-          valorCorreto: "0.07",
-          width: "170px",
-          minWidth: "150px",
-          widthMobile: "140px",
-          inputWidth: "100px",
-          inputWidthMobile: "80px",
-          inputHeight: "32px"
-        },
-      ]
-    },
-    {
-      id: 2,
-      titulo: "Alinhamento do Acoplamento",
-      descricao: "Identifique as dimensões corretas para o alinhamento do acoplamento da bomba",
-      imagem: "../manual/M-02.png",
-      imagemMobile: "../manual/M-02.png",
-      campos: [
-        { 
-          id: 3, 
-          label: "Desalinhamento Radial (mm)", 
-          labelMain:"Medição de excentricidade da guia de caixa de mancais",
-          x: 36, 
-          y: 39,
-          xMobile: 75,
-          yMobile: 15,
-          valorCorreto: "0.07",
-          width: "150px",
-          widthMobile: "140px",
-          inputWidth: "100px",
-          inputWidthMobile: "80px"
-        },
-        { 
-          id: 4, 
-          label: "Desalinhamento Angular (mm)",
-          labelMain:"Medição de Excentricidade do anel de desgaste do motor LA", 
-          x: 67, 
-          y: 39, 
-          xMobile: 70,
-          yMobile: 50,
-          valorCorreto: "0.07",
-          width: "220px",
-          widthMobile: "140px",
-          inputWidth: "100px",
-          inputWidthMobile: "80px"
-        },
-      ]
-    },
-    {
-      id: 3,
-      titulo: "Dimensionamento do Selo Mecânico",
-      descricao: "Insira as medidas corretas para a instalação do selo mecânico",
-      imagem: "../manual/M-03.png",
-      imagemMobile: "../manual/M-03.png",
-      campos: [
-        { 
-          id: 5, 
-          label: "Comprimento de Inserção (mm)", 
-          labelMain: "Medição de excentricidade do anel de desgaste da caixa de selagem",
-          x: 33, 
-          y: 40, 
-          xMobile: 75,
-          yMobile: 15,
-          valorCorreto: "12.5",
-          width: "220px",
-          widthMobile: "140px",
-          inputWidth: "100px",
-          inputWidthMobile: "80px"
-        },
-        { 
-          id: 6, 
-          label: "Diâmetro Interno (mm)", 
-          labelMain: "Medição da excentricidade das guias dos selos componente e selo cartucho",
-          x: 33, 
-          y: 55, 
-          xMobile: 70,
-          yMobile: 50,
-          valorCorreto: "45.2",
-          width: "200px",
-          widthMobile: "140px",
-          inputWidth: "100px",
-          inputWidthMobile: "80px"
-        },
-        { 
-          id: 7, 
-          label: "Espessura da Face (mm)", 
-          labelMain: "Medição da excentricidade da guia da caixa de selagem",
-          x: 68, 
-          y: 45, 
-          xMobile: 65,
-          yMobile: 85,
-          valorCorreto: "1.8",
-          width: "200px",
-          widthMobile: "140px",
-          inputWidth: "100px",
-          inputWidthMobile: "80px"
-        },
-      ]
-    }
-  ];
-
   const handleExit = () => {
   window.location.href = 'TelaInicial';
 };
