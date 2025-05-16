@@ -12,6 +12,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 
+
 const Gear = ({ size, speed, position, rotate = 0, opacity = 1 }) => {
   return (
     <div 
@@ -38,6 +39,7 @@ const Gear = ({ size, speed, position, rotate = 0, opacity = 1 }) => {
 };
 
 export default function LandingPage() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState('sobre');
   
@@ -121,6 +123,7 @@ export default function LandingPage() {
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Rep&Aprov</h1>
           </div>
           
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             <a href="#inicio" className="hover:text-blue-400 transition-colors flex items-center gap-1.5 group">
               <span>Início</span>
@@ -139,12 +142,92 @@ export default function LandingPage() {
               <div className="w-0 group-hover:w-full h-0.5 bg-blue-400 transition-all duration-300"></div>
             </a>
           </nav>
-          <Link to="/LoginPage">
-            <button className="bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-0.5 hidden md:block">
-            Acessar Sistema
-          </button>
+
+          {/* Desktop Login Button */}
+          <Link to="/LoginPage" className="hidden md:block">
+            <button className="bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-0.5">
+              Acessar Sistema
+            </button>
           </Link>
-          
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden p-2 text-white hover:text-blue-400 transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+
+          {/* Mobile Menu */}
+          <div className={`
+            md:hidden fixed inset-0 z-50 bg-slate-900/95 backdrop-blur-sm transform transition-transform duration-300 ease-in-out
+            ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
+          `}>
+            <div className="flex flex-col h-full">
+              <div className="flex justify-between items-center p-4 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                  <Cog size={24} className="text-blue-500" />
+                  <h2 className="text-xl font-bold text-white">Rep&Aprov</h2>
+                </div>
+                <button 
+                  className="p-2 text-white hover:text-blue-400 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <nav className="flex flex-col p-4 space-y-4">
+                <a 
+                  href="#inicio" 
+                  className="text-white hover:text-blue-400 transition-colors py-2 px-4 rounded-lg hover:bg-slate-800"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Início
+                </a>
+                <a 
+                  href="#sobre" 
+                  className="text-white hover:text-blue-400 transition-colors py-2 px-4 rounded-lg hover:bg-slate-800"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sobre
+                </a>
+                <a 
+                  href="#recursos" 
+                  className="text-white hover:text-blue-400 transition-colors py-2 px-4 rounded-lg hover:bg-slate-800"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Recursos
+                </a>
+                <a 
+                  href="#contato" 
+                  className="text-white hover:text-blue-400 transition-colors py-2 px-4 rounded-lg hover:bg-slate-800"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Contato
+                </a>
+                <Link 
+                  to="/LoginPage" 
+                  className="mt-4"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-all duration-300">
+                    Acessar Sistema
+                  </button>
+                </Link>
+              </nav>
+            </div>
+          </div>
         </div>
       </header>
       
@@ -161,7 +244,7 @@ export default function LandingPage() {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              Manual Inovador para <br />
+              Manual Interativo para <br />
               <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
                 Mecânica
               </span>
@@ -173,10 +256,14 @@ export default function LandingPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-1 group">
+              <a
+                href="https://tcc-quiz-motor.web.app/LoginPage"
+                target="_blank"
+                rel="noopener noreferrer"
+              ><button className="bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-1 group">
                 <span>Conheça o Projeto</span>
                 <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
+              </button></a>
               <a
                 href="https://github.com/IcaroDEVms/TCC-mecanica"
                 target="_blank"
@@ -195,7 +282,7 @@ export default function LandingPage() {
               </div>
               <div className="text-sm text-slate-400">
                 <p>Desenvolvido por alunos</p>
-                <p className="font-semibold text-white">Curso Técnico de Mecânica</p>
+                <p className="font-semibold text-white">Curso Técnico de Mecânica e Desenvolvimento de Sistemas</p>
               </div>
             </div>
           </div>
@@ -374,9 +461,13 @@ export default function LandingPage() {
           </div>
           
           <div className="mt-16 text-center">
-            <button className="bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 px-8 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-1">
+            <a
+                href="https://tcc-quiz-motor.web.app/LoginPage"
+                target="_blank"
+                rel="noopener noreferrer"
+              ><button className="bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 px-8 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/50 transform hover:-translate-y-1">
               Explorar Todos os Recursos
-            </button>
+            </button></a>
           </div>
         </div>
         
@@ -412,7 +503,7 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="md:text-right md:pr-8 transition-all duration-300 hover:-translate-y-1">
                     <h3 className="text-xl font-bold text-white">Concepção do Projeto</h3>
-                    <p className="text-blue-400 mb-2">Janeiro 2025</p>
+                    <p className="text-blue-400 mb-2">Abril 2025</p>
                     <p className="text-slate-300">Definição do escopo, objetivos e metodologia de desenvolvimento do sistema.</p>
                   </div>
                   <div className="md:pl-8"></div>
@@ -427,7 +518,7 @@ export default function LandingPage() {
                   <div className="md:pr-8"></div>
                   <div className="md:pl-8 transition-all duration-300 hover:-translate-y-1">
                     <h3 className="text-xl font-bold text-white">Desenvolvimento da Base</h3>
-                    <p className="text-blue-400 mb-2">Fevereiro 2025</p>
+                    <p className="text-blue-400 mb-2">Abril 2025</p>
                     <p className="text-slate-300">Construção da estrutura fundamental do sistema e integração com bancos de dados.</p>
                   </div>
                 </div>
@@ -440,7 +531,7 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="md:text-right md:pr-8 transition-all duration-300 hover:-translate-y-1">
                     <h3 className="text-xl font-bold text-white">Implementação de Recursos</h3>
-                    <p className="text-blue-400 mb-2">Março 2025</p>
+                    <p className="text-blue-400 mb-2">Maio 2025</p>
                     <p className="text-slate-300">Adição das funcionalidades principais e testes de desempenho.</p>
                   </div>
                   <div className="md:pl-8"></div>
@@ -455,7 +546,7 @@ export default function LandingPage() {
                   <div className="md:pr-8"></div>
                   <div className="md:pl-8 transition-all duration-300 hover:-translate-y-1">
                     <h3 className="text-xl font-bold text-white">Validação e Testes</h3>
-                    <p className="text-blue-400 mb-2">Abril 2025</p>
+                    <p className="text-blue-400 mb-2">Maio 2025</p>
                     <p className="text-slate-300">Validação do sistema com usuários reais e ajustes baseados no feedback recebido.</p>
                   </div>
                 </div>
@@ -484,8 +575,8 @@ export default function LandingPage() {
         <Gear size={180} speed={22} position={{ top: '40%', right: '-8%' }} opacity={0.12} />
         <Gear size={120} speed={15} position={{ bottom: '10%', left: '-5%' }} opacity={0.15} />
       </section>
-      
-      {/* Technologies Section */}
+     
+      {/* Technologies Section *
       <section className="py-20 bg-slate-900 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -504,7 +595,7 @@ export default function LandingPage() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {/* Tech 1 */}
+            
             <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 text-center transition-all duration-300 hover:bg-slate-800/80 hover:shadow-lg hover:shadow-blue-900/20 hover:-translate-y-1 group">
               <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4 rounded-lg bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 group-hover:border-blue-500">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -518,7 +609,7 @@ export default function LandingPage() {
             
           </div>
           
-          {/* Animated background gears */}
+         
           <div className="relative h-16 mt-16 mb-8">
             <div className="absolute inset-0 overflow-hidden">
               <div className="flex justify-between items-center w-full h-full animate-slideLeft">
@@ -559,8 +650,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      
-      {/* Testimonial Section */}
+      */}
+      {/* Testimonial Section 
       <section className="py-20 relative">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -575,7 +666,7 @@ export default function LandingPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Testimonial 1 */}
+            
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-2xl border border-slate-700 shadow-lg shadow-blue-900/5 transition-all duration-300 hover:shadow-blue-900/20 hover:-translate-y-1">
               <div className="flex items-center mb-6">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-xl font-bold text-white">
@@ -605,7 +696,7 @@ export default function LandingPage() {
               </p>
             </div>
             
-            {/* Testimonial 2 */}
+            
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-2xl border border-slate-700 shadow-lg shadow-blue-900/5 transition-all duration-300 hover:shadow-blue-900/20 hover:-translate-y-1">
               <div className="flex items-center mb-6">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-xl font-bold text-white">
@@ -640,7 +731,7 @@ export default function LandingPage() {
         <Gear size={220} speed={35} position={{ top: '20%', left: '-10%' }} opacity={0.08} />
         <Gear size={180} speed={25} position={{ bottom: '-5%', right: '-8%' }} opacity={0.1} />
       </section>
-      
+      */}
       {/* Contact Section */}
       <section id="contato" className="py-20 bg-slate-900 relative">
         <div className="container mx-auto px-4">
@@ -842,35 +933,6 @@ export default function LandingPage() {
               </ul>
             </div>
             
-            <div>
-              <h4 className="text-white font-medium mb-4">Recursos</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Documentação</a></li>
-                <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Tutoriais</a></li>
-                <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">API</a></li>
-                <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Suporte</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-medium mb-4">Newsletter</h4>
-              <p className="text-sm text-slate-400 mb-4">
-                Receba atualizações sobre o projeto e novidades do setor.
-              </p>
-              <form className="flex gap-2">
-                <input 
-                  type="email" 
-                  placeholder="Seu e-mail"
-                  className="flex-grow px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button 
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                >
-                  Inscrever
-                </button>
-              </form>
-            </div>
           </div>
           
           <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -878,11 +940,7 @@ export default function LandingPage() {
               © 2025 Rep&Aprov. Todos os direitos reservados.
             </p>
             
-            <div className="flex gap-6 text-sm">
-              <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Termos de Uso</a>
-              <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Privacidade</a>
-              <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Cookies</a>
-            </div>
+         
           </div>
         </div>
       </footer>
