@@ -94,6 +94,12 @@ function LoginPage() {
               </>
             )}
           </button>
+
+         <div>
+          <p>Credenciais:</p>
+          <p>Usuário: admin</p>
+          <p>Senha: 1234</p>
+         </div>
         </form>
         
       </div>
