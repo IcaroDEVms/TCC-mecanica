@@ -11,7 +11,7 @@
 //
 // -- This is a parent command --
 Cypress.Commands.add('login', (username, password) => { 
-    cy.visit('https://tcc-quiz-motor.web.app');
+    cy.visit('https://tcc-quiz-motor.web.app/LoginPage');
     cy.get('#username').type(username);
     cy.get('#password').type(password);
     cy.get('.login-button').click();

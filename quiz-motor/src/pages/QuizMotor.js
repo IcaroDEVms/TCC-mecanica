@@ -73,7 +73,7 @@ export default function QuizMecanica() {
           label: "Excentricidade do anel (mm)",
           labelMain: "Excentricidade do anel de desgaste da caixa de selagem",
           x: 33, y: 40, xMobile: 20, yMobile: 30,
-          valorCorreto: "12.5",
+          valorCorreto: "0.07",
           width: "220px", widthMobile: "125px",
           inputWidth: "100px", inputWidthMobile: "80px"
         },
@@ -82,7 +82,7 @@ export default function QuizMecanica() {
           label: "Excentricidade das guias dos selos(mm)",
           labelMain: "Excentricidade das guias dos selos componente e selo cartucho",
           x: 33, y: 55, xMobile: 20, yMobile: 60,
-          valorCorreto: "45.2",
+          valorCorreto: "0.10",
           width: "200px", widthMobile: "130px",
           inputWidth: "100px", inputWidthMobile: "80px"
         },
@@ -91,7 +91,7 @@ export default function QuizMecanica() {
           label: "Excentricidade da guia da caixa (mm)",
           labelMain: "Excentricidade da guia da caixa de selagem",
           x: 68, y: 45, xMobile: 85, yMobile: 40,
-          valorCorreto: "1.8",
+          valorCorreto: "0.07",
           width: "200px", widthMobile: "110px",
           inputWidth: "100px", inputWidthMobile: "80px"
         }
